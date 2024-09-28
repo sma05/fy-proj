@@ -18,6 +18,9 @@ from django.contrib import admin
 from django.urls import path, include
 from incidents.views import home, register, custom_logout
 from django.contrib.auth import views as auth_views
+ 
+
+# this is comment testing
 
 urlpatterns = [
     path('admin/', admin.site.urls),
