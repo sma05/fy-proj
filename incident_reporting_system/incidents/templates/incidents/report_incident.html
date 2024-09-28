@@ -1,0 +1,88 @@
+{% extends 'incidents/base.html' %}
+{% load static %}
+
+{% block title %}Report Incident - SecureReport{% endblock %}
+
+{% block extra_head %}
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <h1 class="text-3xl font-bold text-gray-800 mb-8">Report an Incident</h1>
+    
+    <div class="bg-white shadow-lg rounded-lg p-6 mb-8">
+        <form method="POST" class="space-y-6">
+            {% csrf_token %}
+            {{ form }}
+            {% comment %} {% for field in form %}
+                <div class="mb-4">
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ field.label }}
+                    </label>
+                    {% if field.field.widget.input_type == 'select' %}
+                        <select name="{{ field.name }}" id="{{ field.id_for_label }}" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">
+                            {{ field }}
+                        </select>
+                    {% elif field.field.widget.input_type == 'radio' %}
+                        <div class="flex space-x-4">
+                            {% for choice in field %}
+                                <label class="flex items-center">
+                                    {{ choice.tag }}
+                                    <span class="ml-2 text-sm text-gray-700">{{ choice.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% elif field.field.widget.input_type == 'checkbox' %}
+                        <div class="space-y-2">
+                            {% for choice in field %}
+                                <label class="flex items-center">
+                                    {{ choice.tag }}
+                                    <span class="ml-2 text-sm text-gray-700">{{ choice.choice_label }}</span>
+                                </label>
+                            {% endfor %}
+                        </div>
+                    {% elif field.field.widget.input_type == 'textarea' %}
+                        <textarea name="{{ field.name }}" id="{{ field.id_for_label }}" rows="4" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500">{{ field.value|default:'' }}</textarea>
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    {% if field.help_text %}
+                        <p class="mt-1 text-sm text-gray-500">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div> {% endcomment %}
+            {% comment %} {% endfor %} {% endcomment %}
+
+            <div class="flex justify-end">
+                <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                    Submit Report
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Tips and guidelines -->
+    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-8">
+        <div class="flex">
+            <div class="flex-shrink-0">
+                <svg class="h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <div class="ml-3">
+                <h3 class="text-sm font-medium text-blue-800">Reporting Tips</h3>
+                <div class="mt-2 text-sm text-blue-700">
+                    <ul class="list-disc pl-5 space-y-1">
+                        <li>Provide as much detail as possible about the incident.</li>
+                        <li>If you're unsure about any information, it's okay to indicate that.</li>
+                        <li>Your report is confidential and will be handled by our security team.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

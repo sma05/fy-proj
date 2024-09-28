@@ -1,0 +1,133 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block title %}IT Personnel Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold mb-8">IT Personnel Dashboard</h1>
+    
+    <!-- Statistics Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Total Incidents</h3>
+            <p class="text-3xl font-bold">{{ total_incidents }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Open Incidents</h3>
+            <p class="text-3xl font-bold">{{ open_incidents }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-2">Resolved Incidents</h3>
+            <p class="text-3xl font-bold">{{ resolved_incidents }}</p>
+        </div>
+    </div>
+    
+    <!-- Charts -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-4">Incidents by Type</h3>
+            <canvas id="incidentTypeChart"></canvas>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-4">Incidents Over Time</h3>
+            <canvas id="incidentTimeChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Tables -->
+    <div class="grid grid-cols-1">
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-4">Recent Incidents</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">ID</th>
+                            <th class="px-4 py-2 text-left">Title</th>
+                            <th class="px-4 py-2 text-left">Type</th>
+                            <th class="px-4 py-2 text-left">Status</th>
+                            <th class="px-4 py-2 text-left">Reported By</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for incident in recent_incidents %}
+                        <tr class="{% cycle 'bg-gray-100' '' %}">
+                            <td class="px-4 py-2">{{ incident.incident_id }}</td>
+                            <td class="px-4 py-2">{{ incident.title }}</td>
+                            <td class="px-4 py-2">{{ incident.get_incident_type_display }}</td>
+                            <td class="px-4 py-2">{{ incident.get_status_display }}</td>
+                            <td class="px-4 py-2">{{ incident.reported_by.username }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow">
+            <h3 class="text-xl font-semibold mb-4">Top Reporting Users</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full table-auto">
+                    <thead>
+                        <tr class="bg-gray-200">
+                            <th class="px-4 py-2 text-left">Username</th>
+                            <th class="px-4 py-2 text-left">Incidents Reported</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in user_activity %}
+                        <tr class="{% cycle 'bg-gray-100' '' %}">
+                            <td class="px-4 py-2">{{ user.username }}</td>
+                            <td class="px-4 py-2">{{ user.incident_count }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Incidents by Type Chart
+    var ctxType = document.getElementById('incidentTypeChart').getContext('2d');
+    var incidentTypeChart = new Chart(ctxType, {
+        type: 'pie',
+        data: {
+            labels: [{% for incident in incidents_by_type %}'{{ incident.incident_type }}',{% endfor %}],
+            datasets: [{
+                data: [{% for incident in incidents_by_type %}{{ incident.count }},{% endfor %}],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.8)',
+                    'rgba(54, 162, 235, 0.8)',
+                    'rgba(255, 206, 86, 0.8)',
+                    'rgba(75, 192, 192, 0.8)',
+                    'rgba(153, 102, 255, 0.8)'
+                ]
+            }]
+        }
+    });
+
+    // Incidents Over Time Chart
+    var ctxTime = document.getElementById('incidentTimeChart').getContext('2d');
+    var incidentTimeChart = new Chart(ctxTime, {
+        type: 'line',
+        data: {
+            labels: [{% for data in incidents_over_time %}'{{ data.created_at__date }}',{% endfor %}],
+            datasets: [{
+                label: 'Incidents',
+                data: [{% for data in incidents_over_time %}{{ data.count }},{% endfor %}],
+                borderColor: 'rgba(75, 192, 192, 1)',
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends 'incidents/base.html' %}
+
+{% block content %}
+<h2>Reported Incidents</h2>
+{% if incidents %}
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Severity</th>
+            <th>Status</th>
+            <th>Reported On</th>
+        </tr>
+    {% for incident in incidents %}
+        <tr>
+            <td>{{ incident.incident_id }}</td>
+            <td>{{ incident.title }}</td>
+            <td>{{ incident.get_incident_type_display }}</td>
+            <td>{{ incident.get_severity_display }}</td>
+            <td>{{ incident.get_status_display }}</td>
+            <td>{{ incident.created_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+    {% endfor %}
+    </table>
+{% else %}
+    <p>No incidents reported yet.</p>
+{% endif %}
+{% endblock %}

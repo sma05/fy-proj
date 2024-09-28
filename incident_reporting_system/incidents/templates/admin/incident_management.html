@@ -1,0 +1,32 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block title %}Incident Management{% endblock %}
+
+{% block content %}
+<h1 class="text-3xl font-bold mb-6">Incident Management</h1>
+
+<table class="w-full bg-white shadow-md rounded-lg overflow-hidden">
+    <thead class="bg-gray-200 text-gray-700">
+        <tr>
+            <th class="py-3 px-4 text-left">ID</th>
+            <th class="py-3 px-4 text-left">Title</th>
+            <th class="py-3 px-4 text-left">Type</th>
+            <th class="py-3 px-4 text-left">Status</th>
+            <th class="py-3 px-4 text-left">Reported By</th>
+            <th class="py-3 px-4 text-left">Created At</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for incident in incidents %}
+        <tr class="border-b border-gray-200 hover:bg-gray-100">
+            <td class="py-3 px-4">{{ incident.incident_id }}</td>
+            <td class="py-3 px-4">{{ incident.title }}</td>
+            <td class="py-3 px-4">{{ incident.get_incident_type_display }}</td>
+            <td class="py-3 px-4">{{ incident.get_status_display }}</td>
+            <td class="py-3 px-4">{{ incident.reported_by.username }}</td>
+            <td class="py-3 px-4">{{ incident.created_at|date:"Y-m-d H:i" }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

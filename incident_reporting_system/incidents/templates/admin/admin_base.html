@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Incident Reporting System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        {% comment %} body { font-family: Arial, sans-serif; line-height: 1.6; margin: 0; padding: 20px; background: #eeff; } {% endcomment %}
+        nav a { margin-right: 10px; }
+        form { max-width: 500px; }
+        input, textarea, select { width: 100%; padding: 8px; margin-bottom: 10px; }
+        button { background-color: #4CAF50; color: white; padding: 10px 15px; border: none; cursor: pointer; }
+ 
+
+        {% comment %} styling the messages {% endcomment %}
+        {% comment %} .messages {
+            list-style: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .messages .success {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            color: #155724;
+        }
+        .messages .warning {
+            background-color: #fff3cd;
+            border-color: #ffeeba;
+            color: #856404;
+        } {% endcomment %}
+
+
+        {% comment %} styling basically for the form fields for {% endcomment %}
+        .container { max-width: 800px; margin: auto; background: white; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        nav { margin-bottom: 20px; background: #333; padding: 10px; border-radius: 5px; }
+        nav a { color: gray; text-decoration: none; padding: 5px 10px; }
+        nav a:hover { background: #555; border-radius: 3px; color: white}
+        h1, h2 { color: #333; }
+        .auth-form { max-width: 400px; margin: auto; }
+        .auth-form input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 3px; }
+        .auth-form button { width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .auth-form button:hover { background: #555; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body class="bg-blac-100 flex flex-col min-h-screen">
+    <header class="bg-blue-600 text-gray p-4">
+        <nav class="container mx-auto flex justify-between items-center">
+            <a href="{% url 'custom_admin_dashboard' %}" class="text-2xl font-bold">SecureReport|Admin Dashboard</a>
+            <div>
+                <a href="{% url 'custom_admin_incident_management' %}" class="px-3 py-2 rounded hover:bg-blue-700">Incident List</a>
+                <a href="{% url 'custom_admin_user_management' %}" class="px-3 py-2 rounded hover:bg-blue-700">User Management</a>
+                {% comment %} <a href="{% url 'incident_list' %}" class="px-3 py-2 rounded hover:bg-blue-700">View Incidents</a> {% endcomment %}
+                {% comment %} {% if user.is_authenticated %}
+                    <span class="px-3 py-2">Hello, {{ user.username }}!</span>
+                    <a href="{% url 'logout' %}" class="px-3 py-2 bg-red-500 rounded hover:bg-red-600">Logout</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="px-3 py-2 bg-green-500 rounded hover:bg-green-600">Login</a>
+                    <a href="{% url 'register' %}" class="px-3 py-2 bg-yellow-500 rounded hover:bg-yellow-600">Register</a>
+                {% endif %} {% endcomment %}
+            </div> 
+        </nav>
+    </header>
+
+    <main class="container mx-auto my-8 flex-grow">
+        {% if messages %}
+        <div class="messages mb-4">
+            {% for message in messages %}
+            <div class="p-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %} rounded">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    {% comment %} <div class="bg-gray-200 p-4 mt-8">
+        <div class="container mx-auto">
+            <h2 class="text-2xl font-bold mb-4">Cybersecurity Tips</h2>
+            <div id="cybersecurity-tips" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                    <h3 class="font-bold">Use Strong Passwords</h3>
+                    <p>Create unique, complex passwords for each of your accounts. Use a mix of uppercase and lowercase letters, numbers, and symbols.</p>
+                </div>
+                <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                    <h3 class="font-bold">Enable Two-Factor Authentication</h3>
+                    <p>Add an extra layer of security to your accounts by enabling two-factor authentication whenever possible.</p>
+                </div>
+                <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                    <h3 class="font-bold">Keep Software Updated</h3>
+                    <p>Regularly update your operating system, applications, and antivirus software to protect against the latest security threats.</p>
+                </div>
+                <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                    <h3 class="font-bold">Be Cautious of Phishing Attempts</h3>
+                    <p>Be wary of unsolicited emails, messages, or phone calls asking for personal information. Verify the sender's identity before sharing sensitive data.</p>
+                </div>
+                <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                    <h3 class="font-bold">Use a VPN on Public Wi-Fi</h3>
+                    <p>When using public Wi-Fi networks, use a Virtual Private Network (VPN) to encrypt your internet traffic and protect your data.</p>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+
+    <footer class="bg-gray-800 text-gray py-8">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-xl font-bold mb-4">About Us</h3>
+                <p>SecureReport is dedicated to providing a secure platform for reporting and managing cybersecurity incidents. Our mission is to create a safer digital environment for all.</p>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'home' %}" class="hover:text-blue-300">Home</a></li>
+                    <li><a href="{% url 'report_incident' %}" class="hover:text-blue-300">Report Incident</a></li>
+                    <li><a href="{% url 'incident_list' %}" class="hover:text-blue-300">View Incidents</a></li>
+                    <li><a href="#" class="hover:text-blue-300">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-blue-300">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-xl font-bold mb-4">Contact Us</h3>
+                <p>Email: support@securereport.com</p>
+                <p>Phone: +1 (555) 123-4567</p>
+                <p>Address: 123 Security St, Cybertown, CT 12345</p>
+            </div>
+        </div>
+    </footer>
+
+
+</body>
+</html>

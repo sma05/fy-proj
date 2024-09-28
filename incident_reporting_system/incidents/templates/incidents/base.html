@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Incident Reporting System{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .cybersecurity-tip {
+            display: none;
+        }
+
+        input, textarea, select { width: 100%; padding: 8px; margin-bottom: 10px; border-width: 1px;  border-color: indigo;}
+
+
+        {% comment %} global styling {% endcomment %}
+
+        .container { max-width: 800px; margin: auto; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        {% comment %} nav { margin-bottom: 20px; background: #333; padding: 10px; border-radius: 5px; } {% endcomment %}
+        nav a { color: indigo; text-decoration: none; padding: 5px 10px; }
+        nav a:hover { background: #555; border-radius: 3px; color: white}
+        h1, h2 { color: #333; }
+        .auth-form { max-width: 400px; margin: auto; }
+        .auth-form input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 3px; }
+        .auth-form button { width: 100%; padding: 10px; background: #333; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        .auth-form button:hover { background: #555; }
+        table { width: 100%; border-collapse: collapse; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+
+        
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-gray-100">
+    <header class="bg-white shadow-lg">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex-shrink-0 flex items-center">
+                    <svg class="h-8 w-8 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.618 5.984A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016zM12 9v2m0 4h.01"/>
+                    </svg>
+                    <a href="{% url 'home' %}" class="ml-2 text-xl font-bold text-gray-800">SecureReport</a>
+                </div>
+                <div class="flex items-center">
+                    <a href="{% url 'home' %}" class="text-gray-900 hover:text-white-900 px-3 py-2 rounded-md text-sm font-medium">Home</a>
+                    <a href="{% url 'report_incident' %}" class="text-gray-900 hover:text-white-900 px-3 py-2 rounded-md text-sm font-medium">Report Incident</a>
+                    <a href="{% url 'incident_list' %}" class="text-gray-900 hover:text-white-900 px-3 py-2 rounded-md text-sm font-medium">View Incidents</a>
+                    {% if user.is_authenticated %}
+                        <span class="text-gray-600 px-3 py-2 rounded-md text-sm font-medium">Hello, {{ user.username }} 👋</span>
+                        <a href="{% url 'logout' %}" class="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">Login</a>
+                        <a href="{% url 'register' %}" class="ml-4 px-4 py-2 border border-transparent text-sm font-medium rounded-md text-indigo-600 bg-white hover:bg-red-900">Sign Up</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container mx-auto my-8 flex-grow px-4 sm:px-6 lg:px-8">
+        {% if messages %}
+        <div class="messages mb-4">
+            {% for message in messages %}
+            <div class="p-4 {% if message.tags == 'success' %}bg-green-100 text-green-700{% elif message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-blue-100 text-blue-700{% endif %} rounded">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <div class="max-w-3xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-8 text-center">Cybersecurity Tips</h2>
+        <div id="cybersecurity-tips" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                <h3 class="font-bold">Use Strong Passwords</h3>
+                <p>Create unique, complex passwords for each of your accounts. Use a mix of uppercase and lowercase letters, numbers, and symbols.</p>
+            </div>
+            <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                <h3 class="font-bold">Enable Two-Factor Authentication</h3>
+                <p>Add an extra layer of security to your accounts by enabling two-factor authentication whenever possible.</p>
+            </div>
+            <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                <h3 class="font-bold">Keep Software Updated</h3>
+                <p>Regularly update your operating system, applications, and antivirus software to protect against the latest security threats.</p>
+            </div>
+            <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                <h3 class="font-bold">Be Cautious of Phishing Attempts</h3>
+                <p>Be wary of unsolicited emails, messages, or phone calls asking for personal information. Verify the sender's identity before sharing sensitive data.</p>
+            </div>
+            <div class="cybersecurity-tip bg-white p-4 rounded shadow">
+                <h3 class="font-bold">Use a VPN on Public Wi-Fi</h3>
+                <p>When using public Wi-Fi networks, use a Virtual Private Network (VPN) to encrypt your internet traffic and protect your data.</p>
+            </div>
+        </div>
+    </div>
+    
+
+    <footer class="bg-gray-800 text-white py-12">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">About Us</h3>
+                    <p class="text-gray-300">SecureReport is dedicated to providing a secure platform for reporting and managing cybersecurity incidents. Our mission is to create a safer digital environment for all.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="{% url 'home' %}" class="text-gray-300 hover:text-white">Home</a></li>
+                        <li><a href="{% url 'report_incident' %}" class="text-gray-300 hover:text-white">Report Incident</a></li>
+                        <li><a href="{% url 'incident_list' %}" class="text-gray-300 hover:text-white">View Incidents</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Us</h3>
+                    <p class="text-gray-300">Email: support@securereport.com</p>
+                    <p class="text-gray-300">Phone: +1 (555) 123-4567</p>
+                    <p class="text-gray-300">Address: 123 Security St, Cybertown, CT 12345</p>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto mt-8 text-center">
+            <p class="text-gray-400">&copy; 2024 SecureReport. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Function to show random cybersecurity tips
+        function showRandomTips() {
+            const tips = document.querySelectorAll('.cybersecurity-tip');
+            const shuffled = Array.from(tips).sort(() => 0.5 - Math.random());
+            shuffled.slice(0, 3).forEach(tip => tip.style.display = 'block');
+        }
+
+        // Call the function when the page loads
+        window.onload = showRandomTips;
+    </script>
+</body>
+</html>

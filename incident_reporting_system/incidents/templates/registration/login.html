@@ -1,0 +1,47 @@
+{% extends 'incidents/base.html' %}
+
+{% block content %}
+<div class="flex justify-center items-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
+    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+        {% if 'login' in request.path %}
+            <h2 class="text-2xl font-bold mb-6 text-center">Login</h2>
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-xs italic">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition duration-300">Login</button>
+            </form>
+            <p class="mt-4 text-center">Don't have an account? <a href="{% url 'register' %}" class="text-blue-500 hover:underline">Register here</a></p>
+        {% else %}
+            <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+            <form method="post" class="space-y-4">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div>
+                        <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700">{{ field.label }}</label>
+                        {{ field }}
+                        {% if field.errors %}
+                            <p class="text-red-500 text-xs italic">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="w-full bg-green-500 text-white py-2 px-4 rounded-md hover:bg-green-600 transition duration-300">Register</button>
+            </form>
+            <p class="mt-4 text-center">Already have an account? <a href="{% url 'login' %}" class="text-blue-500 hover:underline">Login here</a></p>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    input[type="text"], input[type="password"], input[type="email"] {
+        @apply w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500;
+    }
+</style>
+{% endblock %}
