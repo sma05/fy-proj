@@ -1,0 +1,78 @@
+{% extends 'incidents/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="idetails">Incident Details</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Incident ID: {{ incident.incident_id }}</h5>
+            <p class="card-text"><strong>Description:</strong> {{ incident.description }}</p>
+            <p class="card-text"><strong>Reported by:</strong> {{ incident.reported_by }}</p>
+            <p class="card-text"><strong>Created at:</strong> {{ incident.created_at }}</p>
+            <p class="card-text"><strong>Status:</strong> {{ incident.get_status_display }}</p>
+        </div>
+    </div>
+
+    {% if analysis %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">AI Analysis</h5>
+            <p class="card-text"><strong>AI Confidence:</strong> {{ analysis.ai_confidence }}</p>
+            <p class="card-text"><strong>Detected IPs:</strong> {{ analysis.detected_ips|join:", " }}</p>
+            <p class="card-text"><strong>Detected URLs:</strong> {{ analysis.detected_urls|join:", " }}</p>
+            <p class="card-text"><strong>Detected Systems:</strong> {{ analysis.detected_systems|join:", " }}</p>
+            <h6>AI Recommendations:</h6>
+            <ul>
+                {% for recommendation in analysis.ai_recommendations %}
+                <li>{{ recommendation }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if related_incidents %}
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Related Incidents</h5>
+            <ul>
+                {% for related in related_incidents %}
+                <li>
+                    <a href="{% url 'incident_detail' related.related_incident.incident_id %}">
+                        {{ related.related_incident.incident_id }}
+                    </a>
+                    (Similarity: {{ related.similarity_score|floatformat:2 }})
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Incident History</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Updated By</th>
+                        <th>Notes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for history in incident_history %}
+                    <tr>
+                        <td>{{ history.created_at }}</td>
+                        <td>{{ history.get_status_display }}</td>
+                        <td>{{ history.updated_by }}</td>
+                        <td>{{ history.notes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

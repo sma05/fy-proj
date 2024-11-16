@@ -20,7 +20,6 @@ from incidents.views import home, register, custom_logout
 from django.contrib.auth import views as auth_views
  
 
-# this is comment testings
 
 urlpatterns = [
     path('admin/', admin.site.urls),

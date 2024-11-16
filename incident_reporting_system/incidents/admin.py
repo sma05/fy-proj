@@ -32,6 +32,3 @@ class CustomAdminSite(admin.AdminSite):
 
 # Instantiate the CustomAdminSite
 custom_admin_site = CustomAdminSite(name='customadmin')
-
-
-

@@ -145,3 +145,18 @@ LOGOUT_REDIRECT_URL = '/'
 SESSION_COOKIE_NAME = 'incident_reporting_session'
 
 AUTH_USER_MODEL = 'incidents.CustomUser'
+
+# Email Configuration
+if DEBUG:
+    # Development settings
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'noreply@example.com'
+else:
+    # Production settings (customize these with your actual email service details)
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.your-email-provider.com'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'your-email@example.com'
+    EMAIL_HOST_PASSWORD = 'your-email-password'
+    DEFAULT_FROM_EMAIL = 'noreply@yourdomain.com'

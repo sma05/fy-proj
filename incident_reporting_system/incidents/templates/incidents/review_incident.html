@@ -1,0 +1,38 @@
+{% extends 'incidents/base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1>Review Your Incident Report</h1>
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Summary of Your Report</h5>
+            <p class="card-text">{{ summary }}</p>
+        </div>
+    </div>
+
+    <h5>Your Original Input</h5>
+    <p><strong>Title:</strong> {{ incident.title }}</p>
+    <p><strong>Description:</strong> {{ incident.description }}</p>
+    <p><strong>Incident Type:</strong> {{ incident.incident_type }}</p>
+
+
+
+    <!-- review_incident.html -->
+    <form method="POST" action="{% url 'submit_incident' %}">
+        {% csrf_token %}
+        <input type="hidden" name="incident_id" value="{{ incident.incident_id }}">
+        
+        <h2>Summary of Incident</h2>
+        <p>{{ summary }}</p>
+        
+        <button type="submit" class="btn-submit">Submit Incident</button>
+        <a href="{% url 'report_incident' %}?incident_id={{ incident.id }}" class="btn-edit">Edit Report</a>
+    </form>
+
+    {% comment %} <form method="POST" action="{% url 'submit_incident' %}">
+        {% csrf_token %}
+        <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">Submit Report</button>
+        <a href="{% url 'report_incident' %}?incident_id={{ incident.id }}" class="btn btn-secondary">Edit Report</a>
+    </form> {% endcomment %}
+</div>
+{% endblock %}

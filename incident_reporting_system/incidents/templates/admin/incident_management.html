@@ -14,6 +14,7 @@
             <th class="py-3 px-4 text-left">Status</th>
             <th class="py-3 px-4 text-left">Reported By</th>
             <th class="py-3 px-4 text-left">Created At</th>
+            <th class="py-3 px-4 text-left">Actions</th>
         </tr>
     </thead>
     <tbody>
@@ -25,6 +26,11 @@
             <td class="py-3 px-4">{{ incident.get_status_display }}</td>
             <td class="py-3 px-4">{{ incident.reported_by.username }}</td>
             <td class="py-3 px-4">{{ incident.created_at|date:"Y-m-d H:i" }}</td>
+            <td class="py-3 px-4">
+                <a href="{% url 'admin_update_incident' incident.incident_id %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Update
+                </a>
+            </td>
         </tr>
         {% endfor %}
     </tbody>
